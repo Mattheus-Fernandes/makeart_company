@@ -51,7 +51,7 @@ public class CategoryService {
     }
 
     public boolean descriptionAlreadyExists(Category category) {
-        return categoryRepository.existsByDescription(category.getCode());
+        return categoryRepository.existsByDescription(category.getDescription());
     }
 
 }
