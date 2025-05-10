@@ -1,13 +1,14 @@
 package com.makeart.makeart_server.controller;
 
 import com.makeart.makeart_server.business.BrandService;
+import com.makeart.makeart_server.business.dto.BrandDTO;
 import com.makeart.makeart_server.infrastructure.entity.Brand;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/brand")
@@ -20,4 +21,15 @@ public class BrandController {
     public ResponseEntity<Brand> saveBrand(@RequestBody Brand brand) {
         return ResponseEntity.ok(brandService.registerBrand(brand));
     }
+
+    @GetMapping("/{code}")
+    public ResponseEntity<BrandDTO> findBrandByCode(@PathVariable("code") String code) {
+        return ResponseEntity.ok(brandService.filterBrandByCode(code));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BrandDTO>> findAllBrand() {
+        return ResponseEntity.ok(brandService.filterAllBrands());
+    }
+
 }
