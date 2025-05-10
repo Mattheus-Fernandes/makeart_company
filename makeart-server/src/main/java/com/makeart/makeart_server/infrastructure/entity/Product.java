@@ -27,17 +27,17 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "brand_code", referencedColumnName = "code", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("brand-product")
     private Brand brand;
 
     @ManyToOne
     @JoinColumn(name = "category_code", referencedColumnName = "code", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("category-product")
     private Category category;
 
     @ManyToOne
     @JoinColumn(name = "subcategory_code", referencedColumnName = "code", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("subcategory-product")
     private Subcategory subcategory;
 
     @Column(name = "imgPath", nullable = false)
