@@ -30,7 +30,7 @@ public class CategoryService {
                 throw new ConflictException("Código para a categoria já cadastrado " + category.getCode());
             }
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar código " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -42,7 +42,7 @@ public class CategoryService {
                 throw new ConflictException("Categoria já cadastrada " + category.getDescription());
             }
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar categoria " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -51,7 +51,7 @@ public class CategoryService {
     }
 
     public boolean descriptionAlreadyExists(Category category) {
-        return categoryRepository.existsByDescription(category.getCode());
+        return categoryRepository.existsByDescription(category.getDescription());
     }
 
 }
