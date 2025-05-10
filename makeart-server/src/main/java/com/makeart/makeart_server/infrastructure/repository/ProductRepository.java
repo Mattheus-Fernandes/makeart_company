@@ -11,7 +11,4 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     boolean existsByCode(String code);
     boolean existsByDescription(String description);
-    Optional<Brand> findByCodeBrand(String code);
-    Optional<Category> findByCodeCategory(String code);
-    Optional<Subcategory> findByCodeSubcategory(String code);
 }
