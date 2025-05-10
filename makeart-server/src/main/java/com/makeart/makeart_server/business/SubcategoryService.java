@@ -41,7 +41,7 @@ public class SubcategoryService {
                 throw new ConflictException("Código para subcategoria já cadastrado " + subcategory.getCode());
             }
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar código " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -53,7 +53,7 @@ public class SubcategoryService {
                 throw new ConflictException("Subcategoria já cadastrada " + subcategory.getDescription());
             }
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar descrição " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 

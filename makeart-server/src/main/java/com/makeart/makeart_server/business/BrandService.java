@@ -30,7 +30,7 @@ public class BrandService {
                 throw new ConflictException("Código já cadastrado " + brand.getCode());
             }
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar código " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -42,7 +42,7 @@ public class BrandService {
                 throw new ConflictException("Descrição de marca já cadastrada " + brand.getDescription());
             }
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar descrição " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 
