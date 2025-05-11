@@ -1,8 +1,14 @@
 package com.makeart.makeart_server.business;
 
+import com.makeart.makeart_server.infrastructure.entity.Brand;
+import com.makeart.makeart_server.infrastructure.entity.Category;
 import com.makeart.makeart_server.infrastructure.entity.Product;
+import com.makeart.makeart_server.infrastructure.entity.Subcategory;
 import com.makeart.makeart_server.infrastructure.exceptions.ConflictException;
+import com.makeart.makeart_server.infrastructure.repository.BrandRepository;
+import com.makeart.makeart_server.infrastructure.repository.CategoryRepository;
 import com.makeart.makeart_server.infrastructure.repository.ProductRepository;
+import com.makeart.makeart_server.infrastructure.repository.SubcategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +17,31 @@ import org.springframework.stereotype.Service;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final BrandRepository brandRepository;
+    private final CategoryRepository categoryRepository;
+    private final SubcategoryRepository subcategoryRepository;
 
     public Product registerProduct(Product product) {
         try {
             codeExists(product);
             descriptionExists(product);
             stockIsEmpty(product);
+
+            Brand brand = brandRepository.findByCode(product.getBrand().getCode())
+                    .orElseThrow(() -> new ConflictException("Marca não encontrada"));
+
+            product.setBrand(brand);
+
+            Category category = categoryRepository.findByCode(product.getCategory().getCode())
+                    .orElseThrow(() -> new ConflictException("Categoria não encontrada"));
+
+            product.setCategory(category);
+
+            Subcategory subcategory = subcategoryRepository.findByCode(product.getSubcategory().getCode())
+                    .orElseThrow(() -> new ConflictException("Subcategoria não encontrada"));
+
+            product.setSubcategory(subcategory);
+
             return productRepository.save(product);
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
@@ -31,7 +56,7 @@ public class ProductService {
                 throw new ConflictException("Código para o produto já cadastrado " + product.getCode());
             }
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar código " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -43,7 +68,7 @@ public class ProductService {
                 throw new ConflictException("Produto já cadastrado " + product.getDescription());
             }
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar o produto " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -55,7 +80,7 @@ public class ProductService {
             }
 
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar valor de estoque " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 

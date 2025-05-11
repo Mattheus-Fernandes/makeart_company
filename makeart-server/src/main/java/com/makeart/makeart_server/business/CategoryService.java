@@ -1,22 +1,27 @@
 package com.makeart.makeart_server.business;
 
+import com.makeart.makeart_server.business.converter.CategoryConverter;
+import com.makeart.makeart_server.business.dto.CategoryDTO;
 import com.makeart.makeart_server.infrastructure.entity.Category;
 import com.makeart.makeart_server.infrastructure.exceptions.ConflictException;
 import com.makeart.makeart_server.infrastructure.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryConverter categoryConverter;
 
     public Category registerCategory(Category category) {
         try {
             codeExist(category);
             descriptionExist(category);
-            return  categoryRepository.save(category);
+            return categoryRepository.save(category);
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
@@ -30,7 +35,7 @@ public class CategoryService {
                 throw new ConflictException("Código para a categoria já cadastrado " + category.getCode());
             }
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar código " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -38,11 +43,11 @@ public class CategoryService {
         try {
             boolean exist = descriptionAlreadyExists(category);
 
-            if(exist) {
+            if (exist) {
                 throw new ConflictException("Categoria já cadastrada " + category.getDescription());
             }
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar categoria " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -51,7 +56,20 @@ public class CategoryService {
     }
 
     public boolean descriptionAlreadyExists(Category category) {
-        return categoryRepository.existsByDescription(category.getCode());
+        return categoryRepository.existsByDescription(category.getDescription());
     }
 
+    public CategoryDTO filterCategoryByCode(String code) {
+        Category category = categoryRepository.findByCode(code).orElseThrow(
+                () -> new RuntimeException("Nenhuma categoria encontrada.")
+        );
+
+        return new CategoryDTO(category.getCode(), category.getDescription());
+    }
+
+    public List<CategoryDTO> filterAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+
+        return categoryConverter.toListCategoryDTO(categories);
+    }
 }
