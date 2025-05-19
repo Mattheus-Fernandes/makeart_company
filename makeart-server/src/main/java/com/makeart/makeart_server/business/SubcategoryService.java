@@ -1,5 +1,8 @@
 package com.makeart.makeart_server.business;
 
+import com.makeart.makeart_server.business.converter.CategoryConverter;
+import com.makeart.makeart_server.business.converter.SubcategoryConverter;
+import com.makeart.makeart_server.business.dto.SubcategoryDTO;
 import com.makeart.makeart_server.infrastructure.entity.Category;
 import com.makeart.makeart_server.infrastructure.entity.Subcategory;
 import com.makeart.makeart_server.infrastructure.exceptions.ConflictException;
@@ -8,7 +11,8 @@ import com.makeart.makeart_server.infrastructure.repository.SubcategoryRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +20,9 @@ public class SubcategoryService {
 
     private final SubcategoryRepository subcategoryRepository;
     private final CategoryRepository categoryRepository;
+    private final CategoryConverter categoryConverter;
+    public final SubcategoryConverter subcategoryConverter;
+
 
     public Subcategory registerSubcategory(Subcategory subcategory) {
         try {
@@ -63,5 +70,23 @@ public class SubcategoryService {
 
     public boolean descriptionAlreadyExists(Subcategory subcategory) {
         return subcategoryRepository.existsByDescription(subcategory.getDescription());
+    }
+
+    public SubcategoryDTO filterSubcategoryByCode(String code) {
+        Subcategory subcategory = subcategoryRepository.findByCode(code).orElseThrow(
+                () -> new RuntimeException("Nenhuma subcategoria encontrada.")
+        );
+
+        return SubcategoryDTO.builder()
+                .code(subcategory.getCode())
+                .description(subcategory.getDescription())
+                .category(categoryConverter.toCategoryDTO(subcategory.getCategory()))
+                .build();
+    }
+
+    public List<SubcategoryDTO> filterAllSubcategories() {
+        List<Subcategory> subcategories = subcategoryRepository.findAll();
+
+        return subcategoryConverter.toSubcategoryDTOList(subcategories);
     }
 }
