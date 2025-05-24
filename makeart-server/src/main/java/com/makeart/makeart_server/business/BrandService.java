@@ -7,6 +7,8 @@ import com.makeart.makeart_server.infrastructure.exceptions.ConflictException;
 import com.makeart.makeart_server.infrastructure.repository.BrandRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -59,17 +61,40 @@ public class BrandService {
         return brandRepository.existsByDescription(brand.getDescription());
     }
 
-    public BrandDTO filterBrandByCode(String code) {
-        Brand brand = brandRepository.findByCode(code).orElseThrow(
-                () -> new RuntimeException("Marca não encontrada.")
-        );
+    public List<BrandDTO> filterBrandByCode(String code, String description) {
+        try {
+            if ((code == null || code.trim().isEmpty()) && (description == null || description.trim().isEmpty())) {
+                throw new ConflictException("O código ou nome para pesquisa não pode ser vazio.");
+            }
 
-        return new BrandDTO(brand.getCode(), brand.getDescription());
+            List<Brand> brands = new ArrayList<>();
+
+            if (code != null && !code.trim().isEmpty()) {
+                brands = brandRepository.findByCodeContainsIgnoreCase(code);
+            }
+
+            if (description != null && !description.trim().isEmpty()) {
+                brands = brandRepository.findByDescriptionContainsIgnoreCase(description);
+            }
+
+            if (brands.isEmpty()) {
+                throw new ConflictException("Nenhuma marca encontrada.");
+            }
+
+            return brandConverter.toListBrandDTO(brands);
+
+        } catch (ConflictException e) {
+            throw new ConflictException(e.getMessage());
+        }
     }
 
     public List<BrandDTO> filterAllBrands() {
-        List<Brand> brands = brandRepository.findAll();
+        try {
+            List<Brand> brands = brandRepository.findAll();
+            return brandConverter.toListBrandDTO(brands);
 
-        return brandConverter.toListBrandDTO(brands);
+        } catch (ConflictException e) {
+            throw new ConflictException(e.getMessage());
+        }
     }
 }
