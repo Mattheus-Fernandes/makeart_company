@@ -1,16 +1,23 @@
 package com.makeart.makeart_server.business;
 
+import com.makeart.makeart_server.business.converter.BrandConverter;
+import com.makeart.makeart_server.business.dto.BrandDTO;
 import com.makeart.makeart_server.infrastructure.entity.Brand;
 import com.makeart.makeart_server.infrastructure.exceptions.ConflictException;
 import com.makeart.makeart_server.infrastructure.repository.BrandRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 @Service
 @RequiredArgsConstructor
 public class BrandService {
 
     private final BrandRepository brandRepository;
+    private final BrandConverter brandConverter;
 
     public Brand registerBrand(Brand brand) {
         try {
@@ -30,7 +37,7 @@ public class BrandService {
                 throw new ConflictException("Código já cadastrado " + brand.getCode());
             }
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar código " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -42,7 +49,7 @@ public class BrandService {
                 throw new ConflictException("Descrição de marca já cadastrada " + brand.getDescription());
             }
         } catch (ConflictException e) {
-            throw new ConflictException("Erro ao verificar descrição " + e.getMessage());
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -52,5 +59,42 @@ public class BrandService {
 
     public boolean descriptionAlreadyExists(Brand brand) {
         return brandRepository.existsByDescription(brand.getDescription());
+    }
+
+    public List<BrandDTO> filterBrandByCode(String code, String description) {
+        try {
+            if ((code == null || code.trim().isEmpty()) && (description == null || description.trim().isEmpty())) {
+                throw new ConflictException("O código ou nome para pesquisa não pode ser vazio.");
+            }
+
+            List<Brand> brands = new ArrayList<>();
+
+            if (code != null && !code.trim().isEmpty()) {
+                brands = brandRepository.findByCodeContainsIgnoreCase(code);
+            }
+
+            if (description != null && !description.trim().isEmpty()) {
+                brands = brandRepository.findByDescriptionContainsIgnoreCase(description);
+            }
+
+            if (brands.isEmpty()) {
+                throw new ConflictException("Nenhuma marca encontrada.");
+            }
+
+            return brandConverter.toListBrandDTO(brands);
+
+        } catch (ConflictException e) {
+            throw new ConflictException(e.getMessage());
+        }
+    }
+
+    public List<BrandDTO> filterAllBrands() {
+        try {
+            List<Brand> brands = brandRepository.findAll();
+            return brandConverter.toListBrandDTO(brands);
+
+        } catch (ConflictException e) {
+            throw new ConflictException(e.getMessage());
+        }
     }
 }
