@@ -12,7 +12,7 @@ public class ProductDTO {
     private String description;
     private BrandDTO brand;
     private CategoryDTO category;
-    private SubcategoryDTO subcategory;
+    private SubcategorySimpleDTO subcategory;
     private String imgPath;
     private Long stock;
     private Double costPrice;
