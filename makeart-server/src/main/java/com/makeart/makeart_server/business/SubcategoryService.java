@@ -1,6 +1,5 @@
 package com.makeart.makeart_server.business;
 
-import com.makeart.makeart_server.business.converter.CategoryConverter;
 import com.makeart.makeart_server.business.converter.SubcategoryConverter;
 import com.makeart.makeart_server.business.dto.SubcategoryDTO;
 import com.makeart.makeart_server.infrastructure.entity.Category;
@@ -10,9 +9,8 @@ import com.makeart.makeart_server.infrastructure.repository.CategoryRepository;
 import com.makeart.makeart_server.infrastructure.repository.SubcategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
 import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
@@ -20,9 +18,7 @@ public class SubcategoryService {
 
     private final SubcategoryRepository subcategoryRepository;
     private final CategoryRepository categoryRepository;
-    private final CategoryConverter categoryConverter;
     public final SubcategoryConverter subcategoryConverter;
-
 
     public Subcategory registerSubcategory(Subcategory subcategory) {
         try {
@@ -72,16 +68,42 @@ public class SubcategoryService {
         return subcategoryRepository.existsByDescription(subcategory.getDescription());
     }
 
-    public SubcategoryDTO filterSubcategoryByCode(String code) {
-        Subcategory subcategory = subcategoryRepository.findByCode(code).orElseThrow(
-                () -> new RuntimeException("Nenhuma subcategoria encontrada.")
-        );
+    public List<SubcategoryDTO> filterSubcategories(String code, String description, String categoryCode) {
+        try {
+            if (
+                    (code == null || code.trim().isEmpty()) &&
+                    (description == null || description.trim().isEmpty()) &&
+                    (categoryCode == null || categoryCode.trim().isEmpty())
+            ) {
+                throw new ConflictException("O código ou nome para pesquisa não pode ser vazio.");
+            }
 
-        return SubcategoryDTO.builder()
-                .code(subcategory.getCode())
-                .description(subcategory.getDescription())
-                .category(categoryConverter.toCategoryDTO(subcategory.getCategory()))
-                .build();
+            List<Subcategory> subcategories = new ArrayList<>();
+
+            if (code != null && !code.trim().isEmpty()) {
+                subcategories = subcategoryRepository.findByCodeContainsIgnoreCase(code);
+            }
+
+            if (description != null && !description.trim().isEmpty()) {
+                subcategories = subcategoryRepository.findByDescriptionContainsIgnoreCase(description);
+            }
+
+            if (categoryCode != null && !categoryCode.trim().isEmpty()) {
+                subcategories = subcategoryRepository.findByCategory_CodeContainsIgnoreCase(categoryCode);
+            }
+
+            if ((code != null && !code.trim().isEmpty()) && (categoryCode != null && !categoryCode.trim().isEmpty())) {
+                subcategories = subcategoryRepository.findByCodeContainsIgnoreCaseAndCategory_CodeContainsIgnoreCase(code, categoryCode);
+            }
+
+            if (subcategories.isEmpty()) {
+                throw new ConflictException("Nenhuma categoria encontrada.");
+            }
+
+            return subcategoryConverter.toSubcategoryDTOList(subcategories);
+        } catch (ConflictException e) {
+            throw new ConflictException(e.getMessage());
+        }
     }
 
     public List<SubcategoryDTO> filterAllSubcategories() {
