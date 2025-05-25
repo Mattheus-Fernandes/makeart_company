@@ -21,13 +21,15 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.registerCategory(category));
     }
 
-    @GetMapping("/{code}")
-    public ResponseEntity<CategoryDTO> findCategoryByCode(@PathVariable("code") String code) {
-        return ResponseEntity.ok(categoryService.filterCategoryByCode(code));
-    }
-
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> findAllCategories() {
-        return ResponseEntity.ok(categoryService.filterAllCategories());
+    public ResponseEntity<List<CategoryDTO>> searchCategories(
+            @RequestParam(required = false) String code,
+            @RequestParam(required = false) String description
+    ) {
+        if (code == null && description == null) {
+            return ResponseEntity.ok(categoryService.filterAllCategories());
+        }
+
+        return ResponseEntity.ok(categoryService.filterCategory(code, description));
     }
 }

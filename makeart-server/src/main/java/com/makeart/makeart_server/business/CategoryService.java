@@ -8,6 +8,7 @@ import com.makeart.makeart_server.infrastructure.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -59,12 +60,30 @@ public class CategoryService {
         return categoryRepository.existsByDescription(category.getDescription());
     }
 
-    public CategoryDTO filterCategoryByCode(String code) {
-        Category category = categoryRepository.findByCode(code).orElseThrow(
-                () -> new RuntimeException("Nenhuma categoria encontrada.")
-        );
+    public List<CategoryDTO> filterCategory(String code, String description) {
+        try {
+            if ((code == null || code.trim().isEmpty()) && (description == null || description.trim().isEmpty())) {
+                throw new ConflictException("O código ou nome para pesquisa não pode ser vazio.");
+            }
 
-        return new CategoryDTO(category.getCode(), category.getDescription());
+            List<Category> categories = new ArrayList<>();
+
+            if (code != null && !code.trim().isEmpty()) {
+                categories = categoryRepository.findByCodeContainsIgnoreCase(code);
+            }
+
+            if (description != null && !description.trim().isEmpty()) {
+                categories = categoryRepository.findByDescriptionContainsIgnoreCase(description);
+            }
+
+            if (categories.isEmpty()) {
+                throw new ConflictException("Nenhuma categoria encontrada.");
+            }
+
+            return categoryConverter.toListCategoryDTO(categories);
+        } catch (ConflictException e) {
+            throw new ConflictException(e.getMessage());
+        }
     }
 
     public List<CategoryDTO> filterAllCategories() {
