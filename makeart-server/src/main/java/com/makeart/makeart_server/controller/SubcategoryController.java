@@ -22,14 +22,17 @@ public class SubcategoryController {
         return ResponseEntity.ok(subcategoryService.registerSubcategory(subcategory));
     }
 
-    @GetMapping("/{code}")
-    public ResponseEntity<SubcategoryDTO> findSubcategoryByCode(@PathVariable("code") String code) {
-        return ResponseEntity.ok(subcategoryService.filterSubcategoryByCode(code));
-    }
-
     @GetMapping
-    public ResponseEntity<List<SubcategoryDTO>> findAllSubcategories() {
-        return ResponseEntity.ok(subcategoryService.filterAllSubcategories());
+    public ResponseEntity<List<SubcategoryDTO>> findAllSubcategories(
+            @RequestParam(required = false) String code,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String categoryCode
+    ) {
+        if (code == null && description == null && categoryCode == null) {
+            return ResponseEntity.ok(subcategoryService.filterAllSubcategories());
+        }
+
+        return ResponseEntity.ok(subcategoryService.filterSubcategories(code, description, categoryCode));
     }
 
 }
