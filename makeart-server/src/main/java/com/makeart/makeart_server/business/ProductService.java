@@ -13,7 +13,6 @@ import com.makeart.makeart_server.infrastructure.repository.ProductRepository;
 import com.makeart.makeart_server.infrastructure.repository.SubcategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,34 +100,41 @@ public class ProductService {
     public List<ProductDTO> filterProducts(
             String code, String description, String brandCode, String categoryCode, String subcategoryCode
     ) {
-        List<Product> products = new ArrayList<Product>();
+        try {
+            boolean codeEmpty = (code == null || code.trim().isEmpty());
+            boolean descriptionEmpty = (description == null || description.trim().isEmpty());
+            boolean brandEmpty = (brandCode == null || brandCode.trim().isEmpty());
+            boolean categoryEmpty = (categoryCode == null || categoryCode.trim().isEmpty());
+            boolean subcategoryEmpty = (subcategoryCode == null || subcategoryCode.trim().isEmpty());
+            boolean searchInvalid = codeEmpty && descriptionEmpty && brandEmpty && categoryEmpty && subcategoryEmpty;
 
-        if (code != null) {
-            Product product = productRepository.findByCode(code).orElseThrow(
-                    () -> new RuntimeException("Nenhum produto encontrado.")
-            );
+            if (searchInvalid){
+                throw new ConflictException("Digite o código, nome, marca, categoria ou subcategoria para buscar o produto.");
+            }
 
-            return List.of(productConverter.toProductDTO(product));
+            List<Product> products = new ArrayList<Product>();
+
+            if (code != null && !code.trim().isEmpty()) {
+                products = productRepository.findByCodeContainsIgnoreCase(code);
+            } else if (description != null && !description.trim().isEmpty()) {
+                products = productRepository.findByDescriptionContainsIgnoreCase(description);
+            } else if (brandCode != null && !brandCode.trim().isEmpty()) {
+                products = productRepository.findByBrand_CodeContainsIgnoreCase(brandCode);
+            } else if (categoryCode != null && !categoryCode.trim().isEmpty()) {
+                products = productRepository.findByCategory_CodeContainsIgnoreCase(categoryCode);
+            } else if (subcategoryCode != null && !subcategoryCode.trim().isEmpty()) {
+                products = productRepository.findBySubcategory_CodeContainsIgnoreCase(subcategoryCode);
+            }
+
+            if (products.isEmpty()) {
+                throw new ConflictException("Nenhum produto encontrado.");
+            }
+
+            return productConverter.toProductDTOList(products);
+
+        } catch (ConflictException e) {
+            throw new ConflictException(e.getMessage());
         }
-
-        if (brandCode != null) {
-            products = productRepository.findAllByBrandCode(brandCode);
-            isEmptu(products);
-        } else if (description != null) {
-            products = productRepository.findByDescriptionStartingWithIgnoreCase(description);
-            isEmptu(products);
-        } else if (categoryCode != null) {
-            products = productRepository.findAllByCategoryCode(categoryCode);
-            isEmptu(products);
-        } else if (subcategoryCode != null) {
-            products = productRepository.findAllBySubcategoryCode(subcategoryCode);
-            isEmptu(products);
-        } else {
-            products = productRepository.findAll();
-        }
-
-        return productConverter.toProductDTOList(products);
-
     }
 
     public List<ProductDTO> filterAllProducts() {

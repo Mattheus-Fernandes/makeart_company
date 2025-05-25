@@ -32,7 +32,7 @@ public class ProductConverter {
                 .description(product.getDescription())
                 .brand(brandConverter.toBrandDTO(product.getBrand()))
                 .category(categoryConverter.toCategoryDTO(product.getCategory()))
-                .subcategory(subcategoryConverter.toSubcategoryDTO(product.getSubcategory()))
+                .subcategory(subcategoryConverter.toSubcategorySimpleDTO(product.getSubcategory()))
                 .imgPath(product.getImgPath())
                 .stock(product.getStock())
                 .costPrice(product.getCostPrice())

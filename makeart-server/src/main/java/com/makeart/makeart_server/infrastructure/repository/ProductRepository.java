@@ -11,9 +11,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     boolean existsByCode(String code);
     boolean existsByDescription(String description);
     Optional<Product> findByCode(String code);
-    List<Product> findAllByBrandCode(String code);
-    List<Product> findAllByCategoryCode(String code);
-    List<Product> findAllBySubcategoryCode(String code);
-    List<Product> findByDescriptionStartingWithIgnoreCase(String description);
+    List<Product> findByCodeContainsIgnoreCase(String code);
+    List<Product> findByBrand_CodeContainsIgnoreCase(String code);
+    List<Product> findByCategory_CodeContainsIgnoreCase(String code);
+    List<Product> findBySubcategory_CodeContainsIgnoreCase(String code);
+    List<Product> findByDescriptionContainsIgnoreCase(String description);
 
 }
