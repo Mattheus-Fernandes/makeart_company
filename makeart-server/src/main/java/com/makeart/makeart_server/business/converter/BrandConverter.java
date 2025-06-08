@@ -27,4 +27,12 @@ public class BrandConverter {
                 .build();
     }
 
+    public Brand updateBrand(BrandDTO brandDTO, Brand brandEntity) {
+        return Brand.builder()
+                .id(brandEntity.getId())
+                .code(brandDTO.getCode() != null ? brandDTO.getCode() : brandEntity.getCode())
+                .description(brandDTO.getDescription() != null ? brandDTO.getDescription() : brandEntity.getDescription())
+                .build();
+    }
+
 }

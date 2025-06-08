@@ -32,4 +32,12 @@ public class BrandController {
 
         return ResponseEntity.ok(brandService.filterBrandByCode(code, description));
     }
+
+    @PutMapping
+    public ResponseEntity<BrandDTO> updateBrand(
+            @RequestParam(required = false) String code,
+            @RequestBody BrandDTO brandDTO
+    ) {
+        return ResponseEntity.ok(brandService.updateBrand(code, brandDTO));
+    }
 }

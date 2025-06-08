@@ -26,4 +26,13 @@ public class CategoryConverter {
                 .description(category.getDescription())
                 .build();
     }
+
+    public Category updateCategory(CategoryDTO categoryDTO, Category categoryEntity) {
+        return Category.builder()
+                .id(categoryEntity.getId())
+                .code(categoryDTO.getCode() != null ? categoryDTO.getCode() : categoryEntity.getCode())
+                .description(categoryDTO.getDescription() != null ? categoryDTO.getDescription() : categoryEntity.getDescription())
+                .build();
+    }
+
 }

@@ -111,4 +111,14 @@ public class SubcategoryService {
 
         return subcategoryConverter.toSubcategoryDTOList(subcategories);
     }
+
+    public SubcategoryDTO updateSubcategory(String code, SubcategoryDTO subcategoryDTO) {
+        Subcategory subcategoryEntity = subcategoryRepository.findByCode(code).orElseThrow(
+                () -> new ConflictException("Subcategoria não encontrada " + code)
+        );
+
+        Subcategory subcategory = subcategoryConverter.updateSubcategory(subcategoryDTO, subcategoryEntity);
+
+        return subcategoryConverter.toSubcategoryDTO(subcategoryRepository.save(subcategory));
+    }
 }

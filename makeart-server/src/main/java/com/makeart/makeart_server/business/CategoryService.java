@@ -91,4 +91,15 @@ public class CategoryService {
 
         return categoryConverter.toListCategoryDTO(categories);
     }
+
+    public CategoryDTO updateCategory(String code, CategoryDTO categoryDTO) {
+        Category categoryEntity = categoryRepository.findByCode(code).orElseThrow(
+                () -> new ConflictException("Categoria não encontrada " + code)
+        );
+
+        Category category = categoryConverter.updateCategory(categoryDTO, categoryEntity);
+
+        return categoryConverter.toCategoryDTO(categoryRepository.save(category));
+
+    }
 }

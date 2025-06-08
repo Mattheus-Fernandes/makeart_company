@@ -21,7 +21,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.registerProduct(product));
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<ProductDTO>> searchProducts(
             @RequestParam(required = false) String code,
             @RequestParam(required = false) String description,
@@ -34,5 +34,13 @@ public class ProductController {
         }
 
         return ResponseEntity.ok(productService.filterProducts(code, description, brand, category, subcategory));
+    }
+
+    @PutMapping
+    public ResponseEntity<ProductDTO> updateProduct(
+            @RequestParam(required = false) String code,
+            @RequestBody ProductDTO productDTO
+    ){
+        return ResponseEntity.ok(productService.updateProduct(code, productDTO));
     }
 }
