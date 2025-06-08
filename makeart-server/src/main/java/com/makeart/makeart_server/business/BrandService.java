@@ -97,4 +97,14 @@ public class BrandService {
             throw new ConflictException(e.getMessage());
         }
     }
+
+    public BrandDTO updateBrand(String code, BrandDTO brandDTO) {
+        Brand brandEntity = brandRepository.findByCode(code).orElseThrow(
+                () -> new ConflictException("Marca não encontada " + code)
+        );
+
+        Brand brand = brandConverter.updateBrand(brandDTO, brandEntity);
+
+        return brandConverter.toBrandDTO(brandRepository.save(brand));
+    }
 }

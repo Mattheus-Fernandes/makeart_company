@@ -13,6 +13,7 @@ import com.makeart.makeart_server.infrastructure.repository.ProductRepository;
 import com.makeart.makeart_server.infrastructure.repository.SubcategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,7 +109,7 @@ public class ProductService {
             boolean subcategoryEmpty = (subcategoryCode == null || subcategoryCode.trim().isEmpty());
             boolean searchInvalid = codeEmpty && descriptionEmpty && brandEmpty && categoryEmpty && subcategoryEmpty;
 
-            if (searchInvalid){
+            if (searchInvalid) {
                 throw new ConflictException("Digite o código, nome, marca, categoria ou subcategoria para buscar o produto.");
             }
 
@@ -140,15 +141,25 @@ public class ProductService {
     public List<ProductDTO> filterAllProducts() {
         List<Product> products = productRepository.findAll();
 
-        isEmptu(products);
+        isEmpty(products);
 
         return productConverter.toProductDTOList(products);
     }
 
-    public void isEmptu(List<Product> productsDTO) {
+    public void isEmpty(List<Product> productsDTO) {
         if (productsDTO == null || productsDTO.isEmpty()) {
             throw new RuntimeException("Nenhum produto encontrado");
         }
+    }
+
+    public ProductDTO updateProduct(String code, ProductDTO productDTO) {
+        Product productEntity = productRepository.findByCode(code).orElseThrow(
+                () -> new ConflictException("Produto não encontado " + code)
+        );
+
+        Product product = productConverter.updateProduct(productDTO, productEntity);
+
+        return productConverter.toProductDTO(productRepository.save(product));
     }
 
 }

@@ -35,4 +35,12 @@ public class SubcategoryController {
         return ResponseEntity.ok(subcategoryService.filterSubcategories(code, description, categoryCode));
     }
 
+    @PutMapping
+    public ResponseEntity<SubcategoryDTO> updateSubcategory(
+            @RequestParam(required = false) String code,
+            @RequestBody SubcategoryDTO subcategoryDTO
+    ){
+        return ResponseEntity.ok(subcategoryService.updateSubcategory(code, subcategoryDTO));
+    }
+
 }

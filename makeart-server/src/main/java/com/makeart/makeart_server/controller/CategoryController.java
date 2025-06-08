@@ -32,4 +32,12 @@ public class CategoryController {
 
         return ResponseEntity.ok(categoryService.filterCategory(code, description));
     }
+
+    @PutMapping
+    public ResponseEntity<CategoryDTO> updateCategory(
+            @RequestParam(required = false) String code,
+            @RequestBody CategoryDTO categoryDTO
+    ){
+        return ResponseEntity.ok(categoryService.updateCategory(code, categoryDTO));
+    }
 }
