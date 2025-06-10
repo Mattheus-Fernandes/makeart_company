@@ -2,7 +2,6 @@ package com.makeart.makeart_server.controller;
 
 import com.makeart.makeart_server.business.ProductService;
 import com.makeart.makeart_server.business.dto.ProductDTO;
-import com.makeart.makeart_server.infrastructure.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +16,8 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<Product> saveProduct(@RequestBody Product product) {
-        return ResponseEntity.ok(productService.registerProduct(product));
+    public ResponseEntity<ProductDTO> saveProduct(@RequestBody ProductDTO productDTO) {
+        return ResponseEntity.ok(productService.registerProduct(productDTO));
     }
 
     @GetMapping

@@ -17,8 +17,8 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<Category> saveCategory(@RequestBody Category category) {
-        return ResponseEntity.ok(categoryService.registerCategory(category));
+    public ResponseEntity<CategoryDTO> saveCategory(@RequestBody CategoryDTO categoryDTO) {
+        return ResponseEntity.ok(categoryService.registerCategory(categoryDTO));
     }
 
     @GetMapping

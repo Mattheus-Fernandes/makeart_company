@@ -1,6 +1,9 @@
 package com.makeart.makeart_server.business;
 
+import com.makeart.makeart_server.business.converter.BrandConverter;
+import com.makeart.makeart_server.business.converter.CategoryConverter;
 import com.makeart.makeart_server.business.converter.ProductConverter;
+import com.makeart.makeart_server.business.converter.SubcategoryConverter;
 import com.makeart.makeart_server.business.dto.ProductDTO;
 import com.makeart.makeart_server.infrastructure.entity.Brand;
 import com.makeart.makeart_server.infrastructure.entity.Category;
@@ -26,63 +29,69 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final SubcategoryRepository subcategoryRepository;
     private final ProductConverter productConverter;
+    private final BrandConverter brandConverter;
+    private final CategoryConverter categoryConverter;
+    private final SubcategoryConverter subcategoryConverter;
 
-    public Product registerProduct(Product product) {
+    public ProductDTO registerProduct(ProductDTO productDTO) {
         try {
-            codeExists(product);
-            descriptionExists(product);
-            stockIsEmpty(product);
+            codeExists(productDTO);
+            descriptionExists(productDTO);
+            stockIsEmpty(productDTO);
 
-            Brand brand = brandRepository.findByCode(product.getBrand().getCode())
+            Brand brand = brandRepository.findByCode(productDTO.getBrand().getCode())
                     .orElseThrow(() -> new ConflictException("Marca não encontrada"));
 
-            product.setBrand(brand);
+            productDTO.setBrand(brandConverter.toBrandDTO(brand));
 
-            Category category = categoryRepository.findByCode(product.getCategory().getCode())
+            Category category = categoryRepository.findByCode(productDTO.getCategory().getCode())
                     .orElseThrow(() -> new ConflictException("Categoria não encontrada"));
 
-            product.setCategory(category);
+            productDTO.setCategory(categoryConverter.toCategoryDTO(category));
 
-            Subcategory subcategory = subcategoryRepository.findByCode(product.getSubcategory().getCode())
+            Subcategory subcategory = subcategoryRepository.findByCode(productDTO.getSubcategory().getCode())
                     .orElseThrow(() -> new ConflictException("Subcategoria não encontrada"));
 
-            product.setSubcategory(subcategory);
+            productDTO.setSubcategory(subcategoryConverter.toSubcategorySimpleDTO(subcategory));
 
-            return productRepository.save(product);
+            Product product = productConverter.toProductEntity(productDTO);
+
+            return productConverter.toProductDTO(productRepository.save(product));
+
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
-    public void codeExists(Product product) {
+    public void codeExists(ProductDTO productDTO) {
         try {
-            boolean exist = codeAlreadyExists(product);
+            boolean exist = codeAlreadyExists(productDTO);
 
             if (exist) {
-                throw new ConflictException("Código para o produto já cadastrado " + product.getCode());
+                throw new ConflictException("Código para o produto já cadastrado " + productDTO.getCode());
             }
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
-    public void descriptionExists(Product product) {
+    public void descriptionExists(ProductDTO productDTO) {
         try {
-            boolean exist = descriptionAlreadyExists(product);
+            boolean exist = descriptionAlreadyExists(productDTO);
 
             if (exist) {
-                throw new ConflictException("Produto já cadastrado " + product.getDescription());
+                throw new ConflictException("Produto já cadastrado " + productDTO.getDescription());
             }
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
-    public void stockIsEmpty(Product product) {
+    public void stockIsEmpty(ProductDTO productDTO) {
         try {
 
-            if (product.getStock() <= 0) {
-                throw new ConflictException("O valor de estoque precisa ser maior que zero " + product.getStock());
+            if (productDTO.getStock() <= 0) {
+                throw new ConflictException("O valor de estoque precisa ser maior que zero " + productDTO.getStock());
             }
 
         } catch (ConflictException e) {
@@ -90,12 +99,12 @@ public class ProductService {
         }
     }
 
-    public boolean codeAlreadyExists(Product product) {
-        return productRepository.existsByCode(product.getCode());
+    public boolean codeAlreadyExists(ProductDTO productDTO) {
+        return productRepository.existsByCode(productDTO.getCode());
     }
 
-    public boolean descriptionAlreadyExists(Product product) {
-        return productRepository.existsByDescription(product.getDescription());
+    public boolean descriptionAlreadyExists(ProductDTO productDTO) {
+        return productRepository.existsByDescription(productDTO.getDescription());
     }
 
     public List<ProductDTO> filterProducts(

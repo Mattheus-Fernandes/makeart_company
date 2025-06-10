@@ -35,4 +35,11 @@ public class CategoryConverter {
                 .build();
     }
 
+    public Category toCategoryEntity(CategoryDTO categoryDTO) {
+        return Category.builder()
+                .code(categoryDTO.getCode())
+                .description(categoryDTO.getDescription())
+                .build();
+    }
+
 }

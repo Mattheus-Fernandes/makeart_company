@@ -1,5 +1,6 @@
 package com.makeart.makeart_server.business;
 
+import com.makeart.makeart_server.business.converter.CategoryConverter;
 import com.makeart.makeart_server.business.converter.SubcategoryConverter;
 import com.makeart.makeart_server.business.dto.SubcategoryDTO;
 import com.makeart.makeart_server.infrastructure.entity.Category;
@@ -19,53 +20,56 @@ public class SubcategoryService {
     private final SubcategoryRepository subcategoryRepository;
     private final CategoryRepository categoryRepository;
     public final SubcategoryConverter subcategoryConverter;
+    private final CategoryConverter categoryConverter;
 
-    public Subcategory registerSubcategory(Subcategory subcategory) {
+    public SubcategoryDTO registerSubcategory(SubcategoryDTO subcategoryDTO) {
         try {
-            codeExist(subcategory);
-            descriptionExist(subcategory);
+            codeExist(subcategoryDTO);
+            descriptionExist(subcategoryDTO);
 
-            Category category = categoryRepository.findByCode(subcategory.getCategory().getCode())
+            Category category = categoryRepository.findByCode(subcategoryDTO.getCategory().getCode())
                     .orElseThrow(() -> new ConflictException("Categoria não encontrada"));
 
-            subcategory.setCategory(category);
+            subcategoryDTO.setCategory(categoryConverter.toCategoryDTO(category));
 
-            return subcategoryRepository.save(subcategory);
+            Subcategory subcategory = subcategoryConverter.toSubcategoryEntity(subcategoryDTO);
+
+            return subcategoryConverter.toSubcategoryDTO(subcategoryRepository.save(subcategory));
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
-    public void codeExist(Subcategory subcategory) {
+    public void codeExist(SubcategoryDTO subcategoryDTO) {
         try {
-            boolean exist = codeAlreadyExists(subcategory);
+            boolean exist = codeAlreadyExists(subcategoryDTO);
 
             if (exist) {
-                throw new ConflictException("Código para subcategoria já cadastrado " + subcategory.getCode());
+                throw new ConflictException("Código para subcategoria já cadastrado " + subcategoryDTO.getCode());
             }
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
-    public void descriptionExist(Subcategory subcategory) {
+    public void descriptionExist(SubcategoryDTO subcategoryDTO) {
         try {
-            boolean exist = descriptionAlreadyExists(subcategory);
+            boolean exist = descriptionAlreadyExists(subcategoryDTO);
 
             if (exist) {
-                throw new ConflictException("Subcategoria já cadastrada " + subcategory.getDescription());
+                throw new ConflictException("Subcategoria já cadastrada " + subcategoryDTO.getDescription());
             }
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
-    public boolean codeAlreadyExists(Subcategory subcategory) {
-        return subcategoryRepository.existsByCode(subcategory.getCode());
+    public boolean codeAlreadyExists(SubcategoryDTO subcategoryDTO) {
+        return subcategoryRepository.existsByCode(subcategoryDTO.getCode());
     }
 
-    public boolean descriptionAlreadyExists(Subcategory subcategory) {
-        return subcategoryRepository.existsByDescription(subcategory.getDescription());
+    public boolean descriptionAlreadyExists(SubcategoryDTO subcategoryDTO) {
+        return subcategoryRepository.existsByDescription(subcategoryDTO.getDescription());
     }
 
     public List<SubcategoryDTO> filterSubcategories(String code, String description, String categoryCode) {

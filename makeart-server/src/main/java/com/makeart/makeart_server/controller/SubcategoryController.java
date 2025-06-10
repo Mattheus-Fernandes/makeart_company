@@ -18,8 +18,8 @@ public class SubcategoryController {
     private final SubcategoryService subcategoryService;
 
     @PostMapping
-    public ResponseEntity<Subcategory> saveSubcategory(@RequestBody Subcategory subcategory) {
-        return ResponseEntity.ok(subcategoryService.registerSubcategory(subcategory));
+    public ResponseEntity<SubcategoryDTO> saveSubcategory(@RequestBody SubcategoryDTO subcategoryDTO) {
+        return ResponseEntity.ok(subcategoryService.registerSubcategory(subcategoryDTO));
     }
 
     @GetMapping

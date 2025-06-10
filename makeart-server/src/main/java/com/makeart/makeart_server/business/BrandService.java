@@ -19,46 +19,51 @@ public class BrandService {
     private final BrandRepository brandRepository;
     private final BrandConverter brandConverter;
 
-    public Brand registerBrand(Brand brand) {
+    public BrandDTO registerBrand(BrandDTO brandDTO) {
         try {
-            codeExist(brand);
-            descriptionExist(brand);
-            return brandRepository.save(brand);
+            codeExist(brandDTO);
+            descriptionExist(brandDTO);
+
+            codeExist(brandDTO);
+
+            Brand brand = brandConverter.toBrandEntity(brandDTO);
+
+            return brandConverter.toBrandDTO(brandRepository.save(brand));
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
-    public void codeExist(Brand brand) {
+    public void codeExist(BrandDTO brandDTO) {
         try {
-            boolean exist = codeAlreadyExists(brand);
+            boolean exist = codeAlreadyExists(brandDTO);
 
             if (exist) {
-                throw new ConflictException("Código já cadastrado " + brand.getCode());
+                throw new ConflictException("Código já cadastrado " + brandDTO.getCode());
             }
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
-    public void descriptionExist(Brand brand) {
+    public void descriptionExist(BrandDTO brandDTO) {
         try {
-            boolean exist = descriptionAlreadyExists(brand);
+            boolean exist = descriptionAlreadyExists(brandDTO);
 
             if (exist) {
-                throw new ConflictException("Descrição de marca já cadastrada " + brand.getDescription());
+                throw new ConflictException("Descrição de marca já cadastrada " + brandDTO.getDescription());
             }
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
-    public boolean codeAlreadyExists(Brand brand) {
-        return brandRepository.existsByCode(brand.getCode());
+    public boolean codeAlreadyExists(BrandDTO brandDTO) {
+        return brandRepository.existsByCode(brandDTO.getCode());
     }
 
-    public boolean descriptionAlreadyExists(Brand brand) {
-        return brandRepository.existsByDescription(brand.getDescription());
+    public boolean descriptionAlreadyExists(BrandDTO brandDTO) {
+        return brandRepository.existsByDescription(brandDTO.getDescription());
     }
 
     public List<BrandDTO> filterBrandByCode(String code, String description) {

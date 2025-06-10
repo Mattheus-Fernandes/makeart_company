@@ -81,4 +81,14 @@ public class ProductConverter {
                 .details(productDTO.getDetails() != null ? productDTO.getDetails() : productEntity.getDetails())
                 .build();
     }
+
+    public Product toProductEntity(ProductDTO productDTO) {
+        return Product.builder()
+                .code(productDTO.getCode())
+                .description(productDTO.getDescription())
+                .brand(brandConverter.toBrandEntity(productDTO.getBrand()))
+                .category(categoryConverter.toCategoryEntity(productDTO.getCategory()))
+                .subcategory(subcategoryConverter.toSubcategorySimpleEntity(productDTO.getSubcategory()))
+                .build();
+    }
 }
