@@ -35,4 +35,11 @@ public class BrandConverter {
                 .build();
     }
 
+    public Brand toBrandEntity(BrandDTO brandDTO) {
+        return Brand.builder()
+                .code(brandDTO.getCode())
+                .description(brandDTO.getDescription())
+                .build();
+    }
+
 }

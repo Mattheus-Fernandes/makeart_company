@@ -58,5 +58,19 @@ public class SubcategoryConverter {
                 .build();
     }
 
+    public Subcategory toSubcategoryEntity(SubcategoryDTO subcategoryDTO) {
+        return Subcategory.builder()
+                .code(subcategoryDTO.getCode())
+                .description(subcategoryDTO.getDescription())
+                .category(categoryConverter.toCategoryEntity(subcategoryDTO.getCategory()))
+                .build();
+    }
+
+    public Subcategory toSubcategorySimpleEntity(SubcategorySimpleDTO subcategorySimpleDTO) {
+        return Subcategory.builder()
+                .code(subcategorySimpleDTO.getCode())
+                .description(subcategorySimpleDTO.getDescription())
+                .build();
+    }
 
 }

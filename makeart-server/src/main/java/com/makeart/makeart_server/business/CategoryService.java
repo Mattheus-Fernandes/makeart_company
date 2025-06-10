@@ -18,46 +18,49 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryConverter categoryConverter;
 
-    public Category registerCategory(Category category) {
+    public CategoryDTO registerCategory(CategoryDTO categoryDTO) {
         try {
-            codeExist(category);
-            descriptionExist(category);
-            return categoryRepository.save(category);
+            codeExist(categoryDTO);
+            descriptionExist(categoryDTO);
+
+            Category category = categoryConverter.toCategoryEntity(categoryDTO);
+
+            return categoryConverter.toCategoryDTO(categoryRepository.save(category));
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
-    public void codeExist(Category category) {
+    public void codeExist(CategoryDTO categoryDTO) {
         try {
-            boolean exist = codeAlreadyExists(category);
+            boolean exist = codeAlreadyExists(categoryDTO);
 
             if (exist) {
-                throw new ConflictException("Código para a categoria já cadastrado " + category.getCode());
+                throw new ConflictException("Código para a categoria já cadastrado " + categoryDTO.getCode());
             }
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
-    public void descriptionExist(Category category) {
+    public void descriptionExist(CategoryDTO categoryDTO) {
         try {
-            boolean exist = descriptionAlreadyExists(category);
+            boolean exist = descriptionAlreadyExists(categoryDTO);
 
             if (exist) {
-                throw new ConflictException("Categoria já cadastrada " + category.getDescription());
+                throw new ConflictException("Categoria já cadastrada " + categoryDTO.getDescription());
             }
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
-    public boolean codeAlreadyExists(Category category) {
-        return categoryRepository.existsByCode(category.getCode());
+    public boolean codeAlreadyExists(CategoryDTO categoryDTO) {
+        return categoryRepository.existsByCode(categoryDTO.getCode());
     }
 
-    public boolean descriptionAlreadyExists(Category category) {
-        return categoryRepository.existsByDescription(category.getDescription());
+    public boolean descriptionAlreadyExists(CategoryDTO categoryDTO) {
+        return categoryRepository.existsByDescription(categoryDTO.getDescription());
     }
 
     public List<CategoryDTO> filterCategory(String code, String description) {

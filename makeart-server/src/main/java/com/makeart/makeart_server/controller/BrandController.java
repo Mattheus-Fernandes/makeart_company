@@ -17,8 +17,8 @@ public class BrandController {
     private final BrandService brandService;
 
     @PostMapping
-    public ResponseEntity<Brand> saveBrand(@RequestBody Brand brand) {
-        return ResponseEntity.ok(brandService.registerBrand(brand));
+    public ResponseEntity<BrandDTO> saveBrand(@RequestBody BrandDTO brandDTO) {
+        return ResponseEntity.ok(brandService.registerBrand(brandDTO));
     }
 
     @GetMapping
