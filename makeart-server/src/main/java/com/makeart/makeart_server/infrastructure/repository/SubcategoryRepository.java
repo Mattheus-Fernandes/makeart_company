@@ -1,6 +1,7 @@
 package com.makeart.makeart_server.infrastructure.repository;
 
 import com.makeart.makeart_server.infrastructure.entity.Subcategory;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface SubcategoryRepository extends JpaRepository<Subcategory, Long> 
     List<Subcategory> findByDescriptionContainsIgnoreCase(String description);
     List<Subcategory> findByCategory_CodeContainsIgnoreCase(String code);
     List<Subcategory> findByCodeContainsIgnoreCaseAndCategory_CodeContainsIgnoreCase(String code, String categoryCode);
+    @Transactional
+    void deleteSubcategoryByCode(String code);
 }

@@ -37,7 +37,13 @@ public class CategoryController {
     public ResponseEntity<CategoryDTO> updateCategory(
             @RequestParam(required = false) String code,
             @RequestBody CategoryDTO categoryDTO
-    ){
+    ) {
         return ResponseEntity.ok(categoryService.updateCategory(code, categoryDTO));
+    }
+
+    @DeleteMapping("/{code}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable String code) {
+        categoryService.deleteCategory(code);
+        return ResponseEntity.ok().build();
     }
 }

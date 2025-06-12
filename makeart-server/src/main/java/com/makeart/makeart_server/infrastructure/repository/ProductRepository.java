@@ -2,6 +2,7 @@ package com.makeart.makeart_server.infrastructure.repository;
 
 
 import com.makeart.makeart_server.infrastructure.entity.Product;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -16,5 +17,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByCategory_CodeContainsIgnoreCase(String code);
     List<Product> findBySubcategory_CodeContainsIgnoreCase(String code);
     List<Product> findByDescriptionContainsIgnoreCase(String description);
+    @Transactional
+    void deleteProductByCode(String code);
 
 }

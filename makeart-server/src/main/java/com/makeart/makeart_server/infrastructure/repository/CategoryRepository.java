@@ -1,6 +1,7 @@
 package com.makeart.makeart_server.infrastructure.repository;
 
 import com.makeart.makeart_server.infrastructure.entity.Category;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -12,4 +13,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Optional<Category> findByCode(String code);
     List<Category> findByCodeContainsIgnoreCase(String code);
     List<Category> findByDescriptionContainsIgnoreCase(String description);
+    @Transactional
+    void deleteCategoryByCode(String code);
 }

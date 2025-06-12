@@ -42,4 +42,10 @@ public class ProductController {
     ){
         return ResponseEntity.ok(productService.updateProduct(code, productDTO));
     }
+
+    @DeleteMapping("/{code}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable String code) {
+        productService.deleteProduct(code);
+        return ResponseEntity.ok().build();
+    }
 }
