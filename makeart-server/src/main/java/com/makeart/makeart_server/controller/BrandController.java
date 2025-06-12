@@ -40,4 +40,10 @@ public class BrandController {
     ) {
         return ResponseEntity.ok(brandService.updateBrand(code, brandDTO));
     }
+
+    @DeleteMapping("/{code}")
+    public ResponseEntity<Void> deleteBrand(@PathVariable String code) {
+        brandService.deleteBrand(code);
+        return ResponseEntity.ok().build();
+    }
 }

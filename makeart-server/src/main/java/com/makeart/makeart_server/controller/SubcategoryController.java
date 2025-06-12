@@ -43,4 +43,10 @@ public class SubcategoryController {
         return ResponseEntity.ok(subcategoryService.updateSubcategory(code, subcategoryDTO));
     }
 
+    @DeleteMapping("/{code}")
+    public ResponseEntity<Void> deleteSubcategory(@PathVariable String code) {
+        subcategoryService.deleteSubcategory(code);
+        return ResponseEntity.ok().build();
+    }
+
 }

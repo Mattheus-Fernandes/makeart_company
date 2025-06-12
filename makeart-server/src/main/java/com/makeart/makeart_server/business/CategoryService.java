@@ -105,4 +105,8 @@ public class CategoryService {
         return categoryConverter.toCategoryDTO(categoryRepository.save(category));
 
     }
+
+    public void deleteCategory(String code) {
+        categoryRepository.deleteCategoryByCode(code);
+    }
 }

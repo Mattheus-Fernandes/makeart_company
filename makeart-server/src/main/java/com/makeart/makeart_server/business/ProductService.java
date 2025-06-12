@@ -171,4 +171,8 @@ public class ProductService {
         return productConverter.toProductDTO(productRepository.save(product));
     }
 
+    public void deleteProduct(String code) {
+        productRepository.deleteProductByCode(code);
+    }
+
 }

@@ -125,4 +125,8 @@ public class SubcategoryService {
 
         return subcategoryConverter.toSubcategoryDTO(subcategoryRepository.save(subcategory));
     }
+
+    public void deleteSubcategory(String code) {
+        subcategoryRepository.deleteSubcategoryByCode(code);
+    }
 }

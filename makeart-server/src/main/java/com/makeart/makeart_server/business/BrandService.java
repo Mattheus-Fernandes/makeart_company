@@ -112,4 +112,8 @@ public class BrandService {
 
         return brandConverter.toBrandDTO(brandRepository.save(brand));
     }
+
+    public void deleteBrand(String code) {
+        brandRepository.deleteBrandByCode(code);
+    }
 }
