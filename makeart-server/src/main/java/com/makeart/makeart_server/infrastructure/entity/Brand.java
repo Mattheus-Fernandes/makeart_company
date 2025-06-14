@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "brand")
+@Table(name = "brands")
 @Builder
 public class Brand {
 
