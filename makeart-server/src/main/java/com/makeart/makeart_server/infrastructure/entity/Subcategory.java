@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "subcategory")
+@Table(name = "subcategories")
 @Builder
 public class Subcategory {
 
