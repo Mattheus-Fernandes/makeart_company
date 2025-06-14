@@ -1,17 +1,16 @@
 package com.makeart.makeart_server.infrastructure.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "product")
+@Table(name = "products")
+@Builder
 public class Product {
 
     @Id
@@ -26,14 +25,17 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "brand_code", referencedColumnName = "code", nullable = false)
+    @JsonBackReference("brand-product")
     private Brand brand;
 
     @ManyToOne
     @JoinColumn(name = "category_code", referencedColumnName = "code", nullable = false)
+    @JsonBackReference("category-product")
     private Category category;
 
     @ManyToOne
     @JoinColumn(name = "subcategory_code", referencedColumnName = "code", nullable = false)
+    @JsonBackReference("subcategory-product")
     private Subcategory subcategory;
 
     @Column(name = "imgPath", nullable = false)

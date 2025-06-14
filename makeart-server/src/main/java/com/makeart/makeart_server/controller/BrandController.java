@@ -1,13 +1,13 @@
 package com.makeart.makeart_server.controller;
 
 import com.makeart.makeart_server.business.BrandService;
+import com.makeart.makeart_server.business.dto.BrandDTO;
 import com.makeart.makeart_server.infrastructure.entity.Brand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/brand")
@@ -17,7 +17,33 @@ public class BrandController {
     private final BrandService brandService;
 
     @PostMapping
-    public ResponseEntity<Brand> saveBrand(@RequestBody Brand brand) {
-        return ResponseEntity.ok(brandService.registerBrand(brand));
+    public ResponseEntity<BrandDTO> saveBrand(@RequestBody BrandDTO brandDTO) {
+        return ResponseEntity.ok(brandService.registerBrand(brandDTO));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BrandDTO>> searchBrands(
+            @RequestParam(required = false) String code,
+            @RequestParam(required=false) String description
+    ) {
+        if (code == null && description == null) {
+            return ResponseEntity.ok(brandService.filterAllBrands());
+        }
+
+        return ResponseEntity.ok(brandService.filterBrandByCode(code, description));
+    }
+
+    @PutMapping
+    public ResponseEntity<BrandDTO> updateBrand(
+            @RequestParam(required = false) String code,
+            @RequestBody BrandDTO brandDTO
+    ) {
+        return ResponseEntity.ok(brandService.updateBrand(code, brandDTO));
+    }
+
+    @DeleteMapping("/{code}")
+    public ResponseEntity<Void> deleteBrand(@PathVariable String code) {
+        brandService.deleteBrand(code);
+        return ResponseEntity.ok().build();
     }
 }

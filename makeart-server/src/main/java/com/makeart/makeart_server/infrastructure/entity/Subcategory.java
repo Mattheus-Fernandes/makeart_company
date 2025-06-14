@@ -1,10 +1,8 @@
 package com.makeart.makeart_server.infrastructure.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,7 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "subcategory")
+@Table(name = "subcategories")
+@Builder
 public class Subcategory {
 
     @Id
@@ -28,6 +27,7 @@ public class Subcategory {
 
     @ManyToOne
     @JoinColumn(name = "category_code", referencedColumnName = "code")
+    @JsonBackReference
     private Category category;
 
     @OneToMany(mappedBy = "subcategory", cascade = CascadeType.ALL)
